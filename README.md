@@ -29,7 +29,7 @@ Example of how the code should be called like:
 
 To run the code of the ***a3_model*** script, users should provide the following command-line options:
 
-feature file: thisi a required predi=efined argument. It represents the name of the file containing all the extracted and processed data from the mails of the previous script. Those scripts are interconnected, so it is assumed that the csv file created by a3_features.py is the input feature file.
+feature file: this is a required predi=efined argument. It represents the name of the file containing all the extracted and processed data from the mails of the previous script. Those scripts are interconnected, so it is assumed that the csv file created by a3_features.py is the input feature file.
 
 -- epochs: optional argument made by me. The number of epochs it takes to train the model. If this argument is not provided the default number of epochs is 4.
 
