@@ -16,19 +16,29 @@ In the end, most of the ethical concerns raised in the previous paragraphs rely 
 Command-line Options:
 -----------------------------
 To run the code of the ***a3_features*** file, users should provide the following and predefined command-line options:
+
 an input directory: a path to or a directory itself that contains a set of folders of mails named after their author
 the name of the output file: just a name of the file that will contain the data
+
 number of dimensions: the number of the wanted output dimensions of the word-based representations of all the texts
+
 percentage of test instances (optional): an integer that would represent the percentage of instances to be included in the test set.
 
 Example of how the code should be called like:
 ```python .\a3_features.py /scratch/lt2222-v23/enron_sample dataset 20 (--test 20)```
 
-To run the code of the ***a3_model*** script, users should provide the following and predefined command-line option:
-feature file: the name of the file containing all the extracted and processed data from the mails of the previous script. Those scripts are interconnected, so it is assumed that the csv file created by a3_features.py is the input feature file.
+To run the code of the ***a3_model*** script, users should provide the following command-line options:
+
+feature file: thisi a required predi=efined argument. It represents the name of the file containing all the extracted and processed data from the mails of the previous script. Those scripts are interconnected, so it is assumed that the csv file created by a3_features.py is the input feature file.
+
+-- epochs: optional argument made by me. The number of epochs it takes to train the model. If this argument is not provided the default number of epochs is 4.
+
+-- linearity: optional argument created by me. The name of the non-linear activation function to use. The options are the relu or the sigmoid activation functions
+
+If the optional arguments are missing their default values are 4 and ```None``` respectively.
 
 Example of how the code should be called like:
-```python .\a3_models.py /.dataset```
+```python .\a3_models.py /.dataset --epochs 4 --linearity relu/sigmoid```
 
 Design
 -----------------------------
@@ -41,3 +51,6 @@ The vecotrizing is done inside a vectorize() function which has an output of the
 Finally, given an output file name from the command line, the code stores all the data in a csv folder, where the author's name is stated in the first column as well as whether the instance was included in the training or the testing set. These particular columns will help extract the authors' names and the training and testing instances to train and test the model created in a3_model.py script.
 
 ***a3_model:***
+
+The model is a simple Perceptron model that has an optional hidden layer (the hidden size can be modified to be 0 when the model is establieshed in the code). The size of the hidden layer is defined to be 50, because the confusion matrix had better values overall, with more correct predictions on the diagonall. The model has an input layer that takes the number of input features, and the output layer generates the probability distribution over the possible output labels. The hidden layer, when included, applies a non-linear transformation (defined by the user) to the input features before being passed to the output layer. The non-linear transformation applied to the hidden layer depends on the activation function specified by the user when calling the script. The options include the relu function, the sigmoid function, and the identity function, when none linear functions are defined. The model is defined in a class and it's trained in a function using the negative log-likelihood loss function and the Adam optimizer. The LabelEncoder is used to encode the target labels.
+After the valuation of the trained model, a confusion matrix is printed.

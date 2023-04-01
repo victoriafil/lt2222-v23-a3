@@ -15,14 +15,24 @@ from sklearn.metrics import confusion_matrix
 le = LabelEncoder()
 
 class PerceptronModel(nn.Module):
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size, output_size, hidden_size, nonlinearity=None):
         super().__init__()
-        self.input_layer = nn.Linear(input_size, output_size)
+        self.input_layer = nn.Linear(input_size, hidden_size)
+        self.hidden_layer = nn.Linear(hidden_size, output_size)
+        if nonlinearity == "relu":
+            self.nonlinearity = nn.ReLU()
+        elif nonlinearity == "sigmoid":
+            self.nonlinearity = nn.Sigmoid()
+        else:
+            self.nonlinearity = nn.Identity()
         self.logsoftmax = nn.LogSoftmax(dim=1)
+
 
     def forward(self, data):
         after_input_layer = self.input_layer(data)
-        output = self.logsoftmax(after_input_layer)
+        after_hidden_layer = self.nonlinearity(after_input_layer)
+        output = self.hidden_layer(after_hidden_layer)
+        output = self.logsoftmax(output)
         
         return output
     
@@ -58,6 +68,8 @@ def print_confusion_matrix(model, test_vectors, test_labels):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train and test a model on features.")
     parser.add_argument("featurefile", type=str, help="The file containing the table of instances and features.")
+    parser.add_argument("--epochs", dest="epochs", type=int, default="4", help="The number of epochs used to train the model.")
+    parser.add_argument("--linearity", dest="nonlinearity", type=str, default=None, help="The name of the non linear activation function.")
     # Add options here for part 3 -- hidden layer and nonlinearity,
     # and any other options you may think you want/need.  Document
     # everything.
@@ -89,8 +101,8 @@ if __name__ == "__main__":
     test_vectors_tensored = torch.Tensor(vectors_test.to_numpy())
     test_labels_tensored = torch.LongTensor(np.array(labels_test_encoded))
     ## establishing my model
-    model = PerceptronModel(input_size=number_of_features, output_size=number_of_unique_authors)
+    model = PerceptronModel(input_size=number_of_features, output_size=number_of_unique_authors, hidden_size=50, nonlinearity=args.nonlinearity)
     ## training my model on the data I processed and tensored
-    trained_model = train(train_vectors_tensored, train_labels_tensored, epochs=4, batch_size=10)
+    trained_model = train(train_vectors_tensored, train_labels_tensored, args.epochs, batch_size=10)
     ## evaluating and printing my confusion matrix
-    print_confusion_matrix(model, test_vectors_tensored, test_labels_tensored)
+    print_confusion_matrix(trained_model, test_vectors_tensored, test_labels_tensored)
